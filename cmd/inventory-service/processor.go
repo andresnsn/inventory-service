@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 )
 
 type orderItem struct {
@@ -15,8 +16,9 @@ type orderItem struct {
 }
 
 type orderCreatedEvent struct {
-	OrderID string      `json:"orderId"`
-	Items   []orderItem `json:"items"`
+	OrderID   string      `json:"orderId"`
+	Items     []orderItem `json:"items"`
+	CreatedAt time.Time   `json:"createdAt"`
 }
 
 type catalogProduct struct {
