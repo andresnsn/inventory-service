@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"testing"
+	"time"
 )
 
 type fakeCatalog struct {
@@ -49,5 +50,17 @@ func TestDecodeOrderEventRejectsUnknownFields(t *testing.T) {
 	err := decodeOrderEvent([]byte(`{"orderId":"order-1","items":[{"productId":"book-123","quantity":1}],"unexpected":true}`), &event)
 	if err == nil {
 		t.Fatal("decodeOrderEvent() accepted an unknown field")
+	}
+}
+
+func TestDecodeOrderEventReadsCreatedAt(t *testing.T) {
+	var event orderCreatedEvent
+	data := []byte(`{"orderId":"order-1","items":[{"productId":"book-123","quantity":1}],"createdAt":"2026-11-22T23:30:00Z"}`)
+	if err := decodeOrderEvent(data, &event); err != nil {
+		t.Fatalf("decodeOrderEvent() error = %v", err)
+	}
+	want := time.Date(2026, 11, 22, 23, 30, 0, 0, time.UTC)
+	if !event.CreatedAt.Equal(want) {
+		t.Fatalf("CreatedAt = %s, want %s", event.CreatedAt, want)
 	}
 }
